@@ -14,6 +14,7 @@ AllCops:
     - app/controllers/application_controller.rb
     - app/jobs/application_job.rb
     - Gemfile
+    - Guardfile
     - spec/rails_helper.rb
     - spec/spec_helper.rb
 Style/Documentation:
