@@ -3,7 +3,9 @@
 module V1
   class CompaniesController < ApplicationController
     def index
-      render json: Company.all, each_serializer: V1::CompanySerializer
+      companies = Company.page(params[:page]).per(params[:per_page])
+      total = Company.page.total_pages
+      render json: {companies: companies, total: total}
     end
 
     def create; end

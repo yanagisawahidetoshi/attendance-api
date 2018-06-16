@@ -19,7 +19,9 @@ RSpec.describe V1::CompaniesController, type: :controller do
 
     it 'companyが取得されていること' do
       companies
-      get :index
+      
+      get :index, params: {page: 1, per_page: 20} 
+      expect(JSON.parse(response.body)['companies'].length).to eq 20
       expect(response.body).to include companies.first.name
     end
   end
