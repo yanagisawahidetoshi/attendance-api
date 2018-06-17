@@ -25,4 +25,20 @@ RSpec.describe V1::CompaniesController, type: :controller do
       expect(response.body).to include companies.first.name
     end
   end
+  describe 'POST #create' do
+    before do
+      create(:user)
+      request.headers['Authorization'] = User.first.access_token
+    end
+    it '400を返すこと' do
+      post :create
+      expect(response.body).to include '会社名を入力してください'
+      expect(response.status).to eq 400
+    end
+    it '正常な値を返すこと' do
+      post :create, params: {name: 'hogehoge'}
+      puts response.body
+    end
+  end
+
 end
