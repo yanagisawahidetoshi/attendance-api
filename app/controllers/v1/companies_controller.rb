@@ -11,21 +11,42 @@ module V1
     def create
       company = Company.create(company_params)
       unless company.valid?
-        render status: 400, json: { message: company.errors.full_messages }
-      else
-        company = Company.create(company_params)
-        render json: {company: company}
+        render status: 400, json: { message: company.errors.full_messages } and return
       end
+      
+      render json: {company: company}
     end
 
-    def update; end
+    def update
+      if company_params[:id].nil?
+        render status: 400, json: { message: ["IDを入力してください"] } and return
+      end
+      company = Company.find_by_id(company_params[:id])
+      
+      if company.nil?
+        render status: 400, json: { message: ["IDが見つかりません"] } and return
+      end
+      
+      company.update(company_params)
+      render json: {company: company}
+    end
 
-    def delete; end
+    def delete
+      if company_params[:id].nil?
+        render status: 400, json: { message: ["IDを入力してください"] } and return
+      end
+      company = Company.find_by_id(company_params[:id])
+      if company.nil?
+        render status: 400, json: { message: ["IDが見つかりません"] } and return
+      end
+      company.destroy
+      render
+    end
 
     private
 
     def company_params
-      params.permit(:name, :zip, :tel, :address)
+      params.permit(:id, :name, :zip, :tel, :address)
     end
   end
 end
