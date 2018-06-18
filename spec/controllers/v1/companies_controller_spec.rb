@@ -8,10 +8,10 @@ RSpec.describe V1::CompaniesController, type: :controller do
     create(:user)
     request.headers['Authorization'] = User.first.access_token
   end
+  let(:company) { create(:company) }
+  let(:companies) { create_list(:company, 100) }
 
   describe 'GET #index' do
-    let(:company) { create(:company) }
-    let(:companies) { create_list(:company, 100) }
     it '正常にレスポンスを返すこと' do
       get :index
       expect(response).to be_successful
@@ -19,7 +19,6 @@ RSpec.describe V1::CompaniesController, type: :controller do
 
     it 'companyが取得されていること' do
       companies
-      
       get :index, params: {page: 1, per_page: 20} 
       expect(JSON.parse(response.body)['companies'].length).to eq 20
       expect(response.body).to include companies.first.name
@@ -40,9 +39,6 @@ RSpec.describe V1::CompaniesController, type: :controller do
   end
   
   describe 'PUT #update' do
-    let(:company) { create(:company) }
-    let(:companies) { create_list(:company, 100) }
-
     it '400を返すこと' do
       put :update
       expect(response.body).to include 'IDを入力してください'
@@ -70,10 +66,6 @@ RSpec.describe V1::CompaniesController, type: :controller do
   end
   
   describe 'DELETE #delete' do
-    let(:company) { create(:company) }
-    let(:companies) { create_list(:company, 100) }
-    
-    
     it '400を返すこと' do
       delete :delete
       expect(response.body).to include 'IDを入力してください'
