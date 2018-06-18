@@ -2,6 +2,8 @@
 
 module V1
   class CompaniesController < ApplicationController
+    before_action :validate_id, only: [:update, :delete]
+    
     def index
       companies = Company.page(params[:page]).per(params[:per_page])
       total = Company.page.total_pages
@@ -9,7 +11,7 @@ module V1
     end
 
     def create
-      company = Company.create(company_params)
+      company = Company.create(strong_params)
       unless company.valid?
         render status: 400, json: { message: company.errors.full_messages } and return
       end
@@ -18,34 +20,29 @@ module V1
     end
 
     def update
-      if company_params[:id].nil?
-        render status: 400, json: { message: ["IDを入力してください"] } and return
-      end
-      company = Company.find_by_id(company_params[:id])
-      
-      if company.nil?
-        render status: 400, json: { message: ["IDが見つかりません"] } and return
-      end
-      
-      company.update(company_params)
-      render json: {company: company}
+      @company.update(strong_params)
+      render json: {company: @company}
     end
 
     def delete
-      if company_params[:id].nil?
-        render status: 400, json: { message: ["IDを入力してください"] } and return
-      end
-      company = Company.find_by_id(company_params[:id])
-      if company.nil?
-        render status: 400, json: { message: ["IDが見つかりません"] } and return
-      end
-      company.destroy
+      @company.destroy
       render
     end
 
     private
 
-    def company_params
+    def validate_id
+      if strong_params[:id].nil?
+        render status: 400, json: { message: ["IDを入力してください"] } and return
+      end
+      @company = Company.find_by_id(strong_params[:id])
+      
+      if @company.nil?
+        render status: 400, json: { message: ["IDが見つかりません"] } and return
+      end
+    end
+
+    def strong_params
       params.permit(:id, :name, :zip, :tel, :address)
     end
   end
