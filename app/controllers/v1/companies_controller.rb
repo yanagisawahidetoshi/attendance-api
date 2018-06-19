@@ -2,12 +2,13 @@
 
 module V1
   class CompaniesController < ApplicationController
-    before_action :validate_id, only: [:update, :delete]
+    before_action :checkAuth
+    before_action :validId, only: [:update, :delete]
     
     def index
       companies = Company.page(params[:page]).per(params[:per_page])
       total = Company.page.total_pages
-      render json: {companies: companies, total: total}
+      render json: {companies: companies, total: total, currentUser: current_user}
     end
 
     def create
@@ -31,7 +32,13 @@ module V1
 
     private
 
-    def validate_id
+    def checkAuth
+      unless current_user[:authority] == 1
+        render status: 400, json: { message: '権限がありません' } and return
+      end
+    end
+
+    def validId
       if strong_params[:id].nil?
         render status: 400, json: { message: ["IDを入力してください"] } and return
       end
