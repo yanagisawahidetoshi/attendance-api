@@ -6,7 +6,7 @@ Faker::Config.locale = :ja
 RSpec.describe V1::CompaniesController, type: :controller do
   context '権限のあるユーザ' do
     before do
-      create(:user)
+      create(:user, :admin)
       request.headers['Authorization'] = User.first.access_token
     end
     let(:company) { create(:company) }
@@ -97,7 +97,7 @@ RSpec.describe V1::CompaniesController, type: :controller do
 
   context '権限のないユーザ' do
     before do
-      create(:user, authority: 3)
+      create(:user)
       request.headers['Authorization'] = User.first.access_token
     end
 

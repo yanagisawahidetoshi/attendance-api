@@ -5,6 +5,9 @@ FactoryBot.define do
     email { Faker::Internet.email }
     password 'password'
     password_confirmation 'password'
-    authority 1
+    authority 3
+    trait :admin do
+      authority 1
+    end
   end
 end
