@@ -6,7 +6,7 @@ Faker::Config.locale = :ja
 RSpec.describe V1::CompaniesController, type: :controller do
   context '権限のあるユーザ' do
     before do
-      create(:user, :admin)
+      create(:user, :admin, company_id: company.id)
       request.headers['Authorization'] = User.first.access_token
     end
     let(:company) { create(:company) }
@@ -20,7 +20,7 @@ RSpec.describe V1::CompaniesController, type: :controller do
 
       it 'companyが取得されていること' do
         companies
-        get :index, params: {page: 1, per_page: 20} 
+        get :index, params: {page: 1, per_page: 20}
         expect(JSON.parse(response.body)['companies'].length).to eq 20
         expect(response.body).to include companies.first.name
       end
@@ -51,7 +51,7 @@ RSpec.describe V1::CompaniesController, type: :controller do
         companyObj.name = 'HOGEHOGEHOGEHOG'
         params = {id: companyObj.id, name: companyObj.name}
         put :update, params: params
-        
+
         expect(response).to be_successful
         expect(response.body).to include companyObj.name
       end
@@ -60,7 +60,7 @@ RSpec.describe V1::CompaniesController, type: :controller do
         companyObj = Company.last
         params = {id: companyObj.id.to_i + 1, name: companyObj.name}
         put :update, params: params
-        
+
         expect(response.body).to include 'IDが見つかりません'
         expect(response.status).to eq 400
       end
@@ -78,7 +78,7 @@ RSpec.describe V1::CompaniesController, type: :controller do
         companyObj = Company.last
         params = {id: companyObj.id.to_i + 1}
         delete :delete, params: params
-        
+
         expect(response.body).to include 'IDが見つかりません'
         expect(response.status).to eq 400
       end
@@ -88,7 +88,7 @@ RSpec.describe V1::CompaniesController, type: :controller do
         companyObj = Company.first
         params = {id: companyObj.id}
         delete :delete, params: params
-        
+
         expect(response).to be_successful
         expect(Company.find_by_id(companyObj.id)).to eq nil
       end
