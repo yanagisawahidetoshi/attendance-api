@@ -8,7 +8,7 @@ module V1
     def index
       companies = Company.page(params[:page]).per(params[:per_page])
       total = Company.page.total_pages
-      render json: {companies: companies, total: total, currentUser: current_user}
+      render json: {companies: companies, total: total}
     end
 
     def create
