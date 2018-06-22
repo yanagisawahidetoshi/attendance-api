@@ -15,17 +15,9 @@ RSpec.describe V1::UsersController, type: :controller do
         expect(response.status).to eq 400
       end
     end
-
-    describe 'POST #create' do
-      it '通常ユーザの場合権限エラーになること' do
-        post :create
-        expect(response.body).to include '権限がありません'
-        expect(response.status).to eq 400
-      end
-    end
   end
   
-  context '権限のあるユーザ' do
+  context 'companyAdmin' do
     before do
       create(:user, :companyAdmin, company_id: company.id)
       request.headers['Authorization'] = User.first.access_token
@@ -110,10 +102,18 @@ RSpec.describe V1::UsersController, type: :controller do
       end
       
       it '自分自身を更新できること' do
-        params = {id: User.first.id, name: Faker::Name.name}
+        params = {id: User.first.id, name: Faker::Name.name, company_id: User.first.company_id}
         put :update, params: params
-        # expect(response).to be_successful
-        # expect(response.body).to include params[:name]
+        expect(response).to be_successful
+        expect(response.body).to include params[:name]
+      end
+      
+      it 'companyAdminの場合他人は更新できること' do
+        users
+        params = {id: User.first.id.to_i + 1, name: Faker::Name.name, company_id: User.first.company_id}
+        put :update, params: params
+        expect(response).to be_successful
+        expect(response.body).to include params[:name]
       end
     end
   end
