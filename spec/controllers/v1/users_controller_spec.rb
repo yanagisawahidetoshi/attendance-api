@@ -71,10 +71,49 @@ RSpec.describe V1::UsersController, type: :controller do
           authority: 3,
           company_id: User.first.company_id
         }
-        puts params
         post :create, params: params
-        # expect(response.body).to include '権限がありません'
-        # expect(response.status).to eq 400
+        expect(response).to be_successful
+        expect(response.body).to include params[:email]
+      end
+      it '会社管理ユーザが作成されること' do
+        params = {
+          name: Faker::Name.name,
+          email: Faker::Internet.email,
+          password: 'password',
+          password_confirmation: 'password',
+          authority: 2,
+          company_id: User.first.company_id
+        }
+        post :create, params: params
+        expect(response).to be_successful
+        expect(response.body).to include params[:email]
+      end
+      it '管理ユーザが作成されないこと' do
+        params = {
+          name: Faker::Name.name,
+          email: Faker::Internet.email,
+          password: 'password',
+          password_confirmation: 'password',
+          authority: 1,
+          company_id: User.first.company_id
+        }
+        post :create, params: params
+        expect(response.status).to eq 400
+        expect(response.body).to include 'この権限のユーザを作成する権限がありません'
+      end
+    end
+    describe 'PUT #update' do
+      it '400を返すこと' do
+        put :update
+        expect(response.body).to include '会社IDが間違っています'
+        expect(response.status).to eq 400
+      end
+      
+      it '自分自身を更新できること' do
+        params = {id: User.first.id, name: Faker::Name.name}
+        put :update, params: params
+        # expect(response).to be_successful
+        # expect(response.body).to include params[:name]
       end
     end
   end

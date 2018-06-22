@@ -2,7 +2,7 @@
 
 module V1
   class CompaniesController < ApplicationController
-    before_action :checkAuth
+    before_action :check_auth
     before_action :validId, only: [:update, :delete]
     
     def index
@@ -27,12 +27,11 @@ module V1
 
     def delete
       @company.destroy
-      render
     end
 
     private
 
-    def checkAuth
+    def check_auth
       unless current_user[:authority] == 1
         render status: 400, json: { message: '権限がありません' } and return
       end

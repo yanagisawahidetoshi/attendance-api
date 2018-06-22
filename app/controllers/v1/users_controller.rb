@@ -6,8 +6,9 @@ module V1
     before_action :checkAuth
     
     def index
-      users = User.where(company_id: current_user[:company_id]).page(params[:page]).per(params[:per_page])
-      total = User.where(company_id: current_user[:company_id]).page.total_pages
+      userCompany = User.where(company_id: current_user[:company_id])
+      users = userCompany.page(params[:page]).per(params[:per_page])
+      total = userCompany.page.total_pages
       render json: {users: users, total: total}
     end
 
@@ -22,11 +23,15 @@ module V1
         render json: { error: t('user_create_error') }, status: :unprocessable_entity
       end
     end
+    
+    def update
+      
+    end
 
     private
 
     def user_params
-      params.require(:user).permit(:name, :email, :password, :company_id, :authority)
+      params.permit(:name, :email, :password, :company_id, :authority)
     end
     
     def checkAuth
@@ -36,6 +41,10 @@ module V1
 
       if current_user[:authority] == 2 && current_user[:company_id].to_i != params[:company_id].to_i
         render status: 400, json: { message: '会社IDが間違っています' } and return
+      end
+      
+      if current_user[:authority] == 2 && params[:authority].to_i == 1
+        render status: 400, json: { message: 'この権限のユーザを作成する権限がありません' } and return
       end
 
     end

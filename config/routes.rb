@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     resource :login, only: [:create], controller: :sessions
     resource :users, only: [:create]
     get 'users', to: 'users#index'
+    put 'users/update'
   end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
