@@ -7,15 +7,20 @@ module V1
     before_action :validId, only: [:update, :delete]
     
     def index
-      userCompany = User.where(company_id: current_user[:company_id])
-      users = userCompany.page(params[:page]).per(params[:per_page])
-      total = userCompany.page.total_pages
-      render json: {users: users, total: total}
+      users = User
+        .where(company_id: params[:company_id])
+        .page(params[:page])
+        .per(params[:per_page])
+      render json: {users: users, total: users.total_pages}
     end
 
     # POST
     # Create an user
     def create
+      if current_user[:authority] == 3
+        render status: 400, json: { message: 'ユーザを作成する権限がありません' } and return
+      end
+
       @user = User.new strong_params
 
       if @user.save!
@@ -37,11 +42,8 @@ module V1
     end
     
     def checkAuth
-      if current_user[:authority] == 3
-        render status: 400, json: { message: '権限がありません' } and return
-      end
-
-      if current_user[:authority] == 2 && current_user[:company_id].to_i != params[:company_id].to_i
+      if (current_user[:authority] == 2 || current_user[:authority] == 3) &&
+      current_user[:company_id].to_i != params[:company_id].to_i
         render status: 400, json: { message: '会社IDが間違っています' } and return
       end
       
@@ -54,11 +56,9 @@ module V1
       if strong_params[:id].nil?
         render status: 400, json: { message: ["IDを入力してください"] } and return
       end
-      puts current_user[:authority] 
-      puts strong_params[:id]
-      if current_user[:authority] == 3 &&
-      current_user[:id] != strong_params[:id]
 
+      if current_user[:authority] == 3 &&
+      current_user[:id].to_i != strong_params[:id].to_i
         render status: 400, json: { message: ["更新する権限がありません"] } and return
       end
 
