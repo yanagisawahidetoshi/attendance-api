@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     resource :users, only: [:create]
     get 'users', to: 'users#index'
     put 'users/update'
+    delete 'users/delete'
   end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

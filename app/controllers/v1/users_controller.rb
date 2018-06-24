@@ -35,6 +35,13 @@ module V1
       render json: {user: @user}
     end
 
+    def delete
+      if current_user[:authority] == 3
+        render status: 400, json: { message: '権限がありません' } and return
+      end
+      @user.destroy
+    end
+
     private
 
     def strong_params
