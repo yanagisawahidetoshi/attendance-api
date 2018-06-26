@@ -10,7 +10,7 @@ RSpec.describe V1::CompaniesController, type: :controller do
       request.headers['Authorization'] = User.first.access_token
     end
     let(:company) { create(:company) }
-    let(:companies) { create_list(:company, 100) }
+    let(:companies) { create_list(:company, 9) }
 
     describe 'GET #index' do
       it '正常にレスポンスを返すこと' do
@@ -20,8 +20,8 @@ RSpec.describe V1::CompaniesController, type: :controller do
 
       it 'companyが取得されていること' do
         companies
-        get :index, params: {page: 1, per_page: 20}
-        expect(JSON.parse(response.body)['companies'].length).to eq 20
+        get :index, params: {page: 1, per_page: 3} 
+        expect(JSON.parse(response.body)['companies'].length).to eq 3
         expect(response.body).to include companies.first.name
       end
     end
@@ -31,6 +31,7 @@ RSpec.describe V1::CompaniesController, type: :controller do
         post :create
         expect(response.body).to include '会社名を入力してください'
         expect(response.status).to eq 400
+        expect { post(:create) }.to change { Company.count }.by(0)
       end
       it '正常に会社が登録されていること' do
         params = {name: '柳沢'}
@@ -47,18 +48,15 @@ RSpec.describe V1::CompaniesController, type: :controller do
       end
       it '正常に会社名が更新されること' do
         company
-        companyObj = Company.first
-        companyObj.name = 'HOGEHOGEHOGEHOG'
-        params = {id: companyObj.id, name: companyObj.name}
+        params = {id: company.id, name: 'HOGEHOGEHOGEHOG'}
         put :update, params: params
 
         expect(response).to be_successful
-        expect(response.body).to include companyObj.name
+        expect(response.body).to include params[:name]
       end
       it '存在しないidの場合エラーになること' do
         company
-        companyObj = Company.last
-        params = {id: companyObj.id.to_i + 1, name: companyObj.name}
+        params = {id: company.id.to_i + 1, name: company.name}
         put :update, params: params
 
         expect(response.body).to include 'IDが見つかりません'
@@ -71,26 +69,26 @@ RSpec.describe V1::CompaniesController, type: :controller do
         delete :delete
         expect(response.body).to include 'IDを入力してください'
         expect(response.status).to eq 400
+        expect { delete(:delete) }.to change { Company.count }.by(0)
       end
       
       it '存在しないidの場合エラーになること' do
         company
-        companyObj = Company.last
-        params = {id: companyObj.id.to_i + 1}
+        params = {id: company.id.to_i + 1}
         delete :delete, params: params
 
         expect(response.body).to include 'IDが見つかりません'
         expect(response.status).to eq 400
+        expect { delete(:delete) }.to change { Company.count }.by(0)
       end
       
       it '正常に削除されること' do
         company
-        companyObj = Company.first
-        params = {id: companyObj.id}
+        params = {id: company.id}
         delete :delete, params: params
 
         expect(response).to be_successful
-        expect(Company.find_by_id(companyObj.id)).to eq nil
+        expect(Company.find_by_id(params[:id])).to eq nil
       end
     end
   end
