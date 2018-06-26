@@ -9,8 +9,6 @@ class User < ApplicationRecord
   validates :name, presence: true
   validates :authority, presence: true
 
-  enum user_authority: { admin: 1, company_admin: 2, normal: 3 }
-
   enum authorities: { admin: 1, company_admin: 2, normal: 3 }
   def update_access_token!
     self.access_token = "#{id}:#{Devise.friendly_token}"

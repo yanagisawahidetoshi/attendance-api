@@ -39,19 +39,19 @@ RSpec.describe V1::UsersController, type: :controller do
     end
 
     context '通常ユーザが作成されること' do
-      let(:params) { tmp_params.merge({authority: 3}) }
+      let(:params) { tmp_params.merge({authority: User.authorities["normal"]}) }
       it { expect(subject).to be_successful }
       it { expect(subject.body).to include params[:email] }
     end
 
     context '会社管理ユーザが作成されること' do
-      let(:params) { tmp_params.merge({authority: 2}) }
+      let(:params) { tmp_params.merge({authority: User.authorities["company_admin"]}) }
       it { expect(subject).to be_successful }
       it { expect(subject.body).to include params[:email] }
     end
 
     context '管理ユーザが作成されないこと' do
-      let(:params) { tmp_params.merge({authority: 1}) }
+      let(:params) { tmp_params.merge({authority: User.authorities["admin"]}) }
       it { expect(subject.status).to eq 400 }
       it { expect(subject.body).to include 'この権限のユーザを作成する権限がありません' }
       it { expect { subject }.to change { User.count }.by(0) }
@@ -66,19 +66,19 @@ RSpec.describe V1::UsersController, type: :controller do
     end
 
     context '通常ユーザが作成されること' do
-      let(:params) { tmp_params.merge({authority: 3}) }
+      let(:params) { tmp_params.merge({authority: User.authorities["normal"]}) }
       it { expect(subject).to be_successful }
       it { expect(subject.body).to include params[:email] }
     end
 
     context '会社管理ユーザが作成されること' do
-      let(:params) { tmp_params.merge({authority: 2}) }
+      let(:params) { tmp_params.merge({authority: User.authorities["company_admin"]}) }
       it { expect(subject).to be_successful }
       it { expect(subject.body).to include params[:email] }
     end
 
     context '管理ユーザが作成されること' do
-      let(:params) { tmp_params.merge({authority: 1}) }
+      let(:params) { tmp_params.merge({authority: User.authorities["admin"]}) }
       it { expect(subject).to be_successful }
       it { expect(subject.body).to include params[:email] }
     end

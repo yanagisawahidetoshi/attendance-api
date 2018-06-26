@@ -17,7 +17,7 @@ module V1
     # POST
     # Create an user
     def create
-      if current_user[:authority] == 3
+      if current_user[:authority] == User.authorities["normal"]
         render status: 400, json: { message: 'ユーザを作成する権限がありません' } and return
       end
 
@@ -36,7 +36,7 @@ module V1
     end
 
     def delete
-      if current_user[:authority] == 3
+      if current_user[:authority] == User.authorities["normal"]
         render status: 400, json: { message: '権限がありません' } and return
       end
       @user.destroy
@@ -49,12 +49,12 @@ module V1
     end
     
     def checkAuth
-      if (current_user[:authority] == 2 || current_user[:authority] == 3) &&
+      if (current_user[:authority] == User.authorities["company_admin"] || current_user[:authority] == User.authorities["normal"]) &&
       current_user[:company_id].to_i != params[:company_id].to_i
         render status: 400, json: { message: '会社IDが間違っています' } and return
       end
       
-      if current_user[:authority] == 2 && params[:authority].to_i == 1
+      if current_user[:authority] == User.authorities["company_admin"] && params[:authority].to_i == User.authorities["admin"]
         render status: 400, json: { message: 'この権限のユーザを作成する権限がありません' } and return
       end
     end
@@ -64,7 +64,7 @@ module V1
         render status: 400, json: { message: ["IDを入力してください"] } and return
       end
 
-      if current_user[:authority] == 3 &&
+      if current_user[:authority] == User.authorities["normal"] &&
       current_user[:id].to_i != strong_params[:id].to_i
         render status: 400, json: { message: ["更新する権限がありません"] } and return
       end

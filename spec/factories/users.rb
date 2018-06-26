@@ -11,7 +11,7 @@ FactoryBot.define do
       authority User.authorities["admin"]
     end
     trait :companyAdmin do
-      authority 2
+      authority User.authorities["company_admin"]
     end
   end
 end
