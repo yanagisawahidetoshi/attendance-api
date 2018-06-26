@@ -14,13 +14,13 @@ RSpec.describe Company, type: :model do
   end
 
   it '名前が33文字以上なら無効であること' do
-    company = build(:company, name: 'sbMlrfWR7j9SxIodGEalQqsg262SQvW9lqDzWCcc2azGCcCPebIwZE7C5iPB98qJezLFlI7W1BX65vQFdkIa0p3Bmco2SD5COeKxJRqtwWnoTiKe7Jkhgflxys1M9PvLsesuhdg3pIBOyFIY3CitrUYAfXwUGyZJKQ9giHHiuvtsRA79aslrTWSWiDefYnqNtrLyS1Zfhhpf6cKN8WUSyh2l7RIlgqgn0iASgQsjrP3BAxSSmts7jocJEv3ViOxcBbb7ccUY9AhWmcpcMJN2LvHSglpZRD4ECqknWGpZiMZqWux3EM1b7Pcrwn7DzShDU0s0HWGvFL')
+    company = build(:company, name: 'a' * 33)
     company.valid?
     expect(company.errors[:name]).to include('は32文字以内で入力してください')
   end
 
   it '名前が32文字なら有効であること' do
-    company = build(:company, name: 'bMlrfWR7j9SxIodGEalQqsg262SQvW9lqDzWCcc2azGCcCPebIwZE7C5iPB98qJezLFlI7W1BX65vQFdkIa0p3Bmco2SD5COeKxJRqtwWnoTiKe7Jkhgflxys1M9PvLsesuhdg3pIBOyFIY3CitrUYAfXwUGyZJKQ9giHHiuvtsRA79aslrTWSWiDefYnqNtrLyS1Zfhhpf6cKN8WUSyh2l7RIlgqgn0iASgQsjrP3BAxSSmts7jocJEv3ViOxcBbb7ccUY9AhWmcpcMJN2LvHSglpZRD4ECqknWGpZiMZqWux3EM1b7Pcrwn7DzShDU0s0HWGvFL')
+    company = build(:company, name: 'a' * 32)
     company.valid?
     expect(build(:company)).to be_valid
   end
@@ -31,22 +31,44 @@ RSpec.describe Company, type: :model do
     expect(company.errors[:zip]).to include('は8文字以内で入力してください')
   end
 
+  it '郵便番号のハイフンが２こあれば無効であること' do
+    company = build(:company, zip: '553-000-3')
+    company.valid?
+    expect(company.errors[:zip]).to include('は不正な値です')
+  end
+  
+  it '郵便番号のハイフンがなければ有効であること' do
+    company = build(:company, zip: '5530002')
+    company.valid?
+    expect(build(:company)).to be_valid
+  end
+  
   it '電話番号が14文字なら無効であること' do
     company = build(:company, tel: '090-4295-61856')
     company.valid?
     expect(company.errors[:tel]).to include('は13文字以内で入力してください')
   end
+  
+  it '電話番号のハイフンが２個続きであれば無効であること' do
+    company = build(:company, tel: '090-4295--6185')
+    company.valid?
+    expect(company.errors[:tel]).to include('は不正な値です')
+  end
 
+  it '電話番号のハイフンがない場合は有効であること' do
+    company = build(:company, tel: '09042956185')
+    company.valid?
+    expect(build(:company)).to be_valid
+  end
+  
   it '住所が65文字なら無効であること' do
-    company = build(:company, address: 'EPaXx25VwzLXMTSmrwERG9h-ficJEgVfUXbtHZMi_PnYEjwBT4Wx7R_EEtMPEEpzH8Rzz4jytVzFaaeFVMAcAWWDwrVM5pd5ZF8sPEeSdf64QG4z4cCpZUDYbe5rZ8Y9dXs_DFMjV5H4xM3-kMgjiSSB4ca-YSUYuueFLFtA5nj9zWYA7eSE8XrEd2p5HNJgTVg9EbphdAPb3-7J3s6p3EGHj7tURDWBNxg3hxnpVKssumm7EzGrmUhD7Ua3cjVQtnBs-_RHyAdGmegB_szR3rVtE_K74LMu7_Knk9P7JAJtA6c25RHTWN73462Qwh3mxyb5w
-')
+    company = build(:company, address: 'a' * 65)
     company.valid?
     expect(company.errors[:address]).to include('は64文字以内で入力してください')
   end
 
   it '住所が64文字なら有効であること' do
-    company = build(:company, address: 'PaXx25VwzLXMTSmrwERG9h-ficJEgVfUXbtHZMi_PnYEjwBT4Wx7R_EEtMPEEpzH8Rzz4jytVzFaaeFVMAcAWWDwrVM5pd5ZF8sPEeSdf64QG4z4cCpZUDYbe5rZ8Y9dXs_DFMjV5H4xM3-kMgjiSSB4ca-YSUYuueFLFtA5nj9zWYA7eSE8XrEd2p5HNJgTVg9EbphdAPb3-7J3s6p3EGHj7tURDWBNxg3hxnpVKssumm7EzGrmUhD7Ua3cjVQtnBs-_RHyAdGmegB_szR3rVtE_K74LMu7_Knk9P7JAJtA6c25RHTWN73462Qwh3mxyb5w
-')
+    company = build(:company, address: 'a' * 64)
     company.valid?
     expect(build(:company)).to be_valid
   end

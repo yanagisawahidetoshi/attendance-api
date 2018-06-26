@@ -9,6 +9,7 @@ class User < ApplicationRecord
 
   validates :email, presence: true
 
+  enum authorities: { admin: 1, company_admin: 2, normal: 3 }
   def update_access_token!
     self.access_token = "#{id}:#{Devise.friendly_token}"
     save
