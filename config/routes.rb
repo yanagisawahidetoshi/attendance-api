@@ -13,6 +13,8 @@ Rails.application.routes.draw do
     get 'users', to: 'users#index'
     put 'users/update'
     delete 'users/delete'
+    
+    get 'machines', to: 'machines#index'
   end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
