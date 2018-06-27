@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_18_235450) do
+ActiveRecord::Schema.define(version: 2018_06_26_122606) do
 
   create_table "companies", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", limit: 32, null: false
@@ -20,6 +20,15 @@ ActiveRecord::Schema.define(version: 2018_06_18_235450) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name", "address"], name: "UNIQUE", unique: true
+  end
+
+  create_table "machines", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name", limit: 32
+    t.bigint "company_id"
+    t.string "mac_address", limit: 17, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_machines_on_company_id"
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -38,9 +47,11 @@ ActiveRecord::Schema.define(version: 2018_06_18_235450) do
     t.string "access_token"
     t.integer "company_id"
     t.integer "authority"
+    t.string "name"
     t.index ["company_id"], name: "index_users_on_company_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "machines", "companies"
 end
