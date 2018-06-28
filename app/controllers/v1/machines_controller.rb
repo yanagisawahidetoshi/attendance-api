@@ -26,7 +26,15 @@ module V1
       unless machine.valid?
         render status: 400, json: { message: machine.errors.full_messages } and return
       end
+    end
+    
+    def update
+      if current_user[:authority] == User.authorities["company_admin"]
+        strong_params_for_update.delete(:company_id)
+      end
       
+      @machine.update(strong_params_for_update)
+      render json: {machine: @machine}
     end
     
     private
@@ -37,6 +45,10 @@ module V1
     
     def strong_params_for_create
       params.permit(:api_key, :mac_address, :company_id)
+    end
+    
+    def strong_params_for_update
+      params.permit(:id, :name, :company_id)
     end
     
     def check_auth
@@ -53,6 +65,10 @@ module V1
         strong_params[:company_id].to_i != current_user[:company_id].to_i
           render status: 400, json: { message: '会社IDが間違っています' } and return
       end
+    end
+    
+    def valid_id
+      @machine = Machine.find_by_id(strong_params_for_update[:id])
     end
   end
 end
