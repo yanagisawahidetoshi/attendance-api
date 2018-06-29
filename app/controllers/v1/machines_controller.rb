@@ -37,6 +37,10 @@ module V1
       render json: {machine: @machine}
     end
     
+    def delete
+      @machine.destroy
+    end
+
     private
     
     def strong_params
