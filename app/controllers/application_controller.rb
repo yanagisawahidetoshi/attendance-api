@@ -17,6 +17,24 @@ class ApplicationController < ActionController::API
       authenticate_error
     end
   end
+  
+  protected
+  
+  def is_admin
+    current_user[:authority] == User.authorities['admin']
+  end
+  
+  def is_company_admin_user
+    current_user[:authority] == User.authorities['company_admin']
+  end
+  
+  def is_normal_user
+    current_user[:authority] == User.authorities['normal']
+  end
+  
+  def render_bad_request(message)
+    render(status: :bad_request, json: { message: message })
+  end
 
   private
 

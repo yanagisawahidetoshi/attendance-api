@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'faker'
 require 'rails_helper'
 Faker::Config.locale = :ja
@@ -12,13 +14,13 @@ RSpec.describe V1::MachinesController, type: :controller do
         create(:user, :admin, company_id: companies.first.id)
         request.headers['Authorization'] = User.first.access_token
       end
-      
+
       it '削除できること' do
-        params = {id: machines1.id}
+        params = { id: machines1.id }
         delete :delete, params: params
-        
+
         expect(response).to be_successful
-        expect(Machine.find_by_id(params[:id])).to eq nil
+        expect(Machine.find_by(id: params[:id])).to eq nil
       end
     end
     context 'company adminユーザ' do
@@ -26,11 +28,11 @@ RSpec.describe V1::MachinesController, type: :controller do
         create(:user, :companyAdmin, company_id: companies.first.id)
         request.headers['Authorization'] = User.first.access_token
       end
-      
+
       it '削除できないこと' do
-        params = {id: machines1.id}
+        params = { id: machines1.id }
         delete :delete, params: params
-        
+
         expect(response.status).to eq 400
         expect { delete(:delete) }.to change { Machine.count }.by(0)
       end
@@ -40,11 +42,11 @@ RSpec.describe V1::MachinesController, type: :controller do
         create(:user, company_id: companies.first.id)
         request.headers['Authorization'] = User.first.access_token
       end
-      
+
       it '削除できないこと' do
-        params = {id: machines1.id}
+        params = { id: machines1.id }
         delete :delete, params: params
-        
+
         expect(response.status).to eq 400
         expect { delete(:delete) }.to change { Machine.count }.by(0)
       end

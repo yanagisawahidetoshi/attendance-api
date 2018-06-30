@@ -1,15 +1,19 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 require 'faker'
 
 RSpec.describe V1::UsersController, type: :controller do
   let(:company) { build(:company) }
-  let(:tmp_params) {{
-    name: Faker::Name.name,
-    email: Faker::Internet.email,
-    password: 'password',
-    password_confirmation: 'password',
-    company_id: User.first.company_id,
-  }}
+  let(:tmp_params) do
+    {
+      name: Faker::Name.name,
+      email: Faker::Internet.email,
+      password: 'password',
+      password_confirmation: 'password',
+      company_id: User.first.company_id
+    }
+  end
 
   subject do
     post :create, params: params
@@ -31,7 +35,7 @@ RSpec.describe V1::UsersController, type: :controller do
       end
     end
   end
-  
+
   context 'companyAdmin' do
     before do
       create(:user, :companyAdmin, company_id: company.id)
@@ -39,25 +43,24 @@ RSpec.describe V1::UsersController, type: :controller do
     end
 
     context '通常ユーザが作成されること' do
-      let(:params) { tmp_params.merge({authority: User.authorities["normal"]}) }
+      let(:params) { tmp_params.merge(authority: User.authorities['normal']) }
       it { expect(subject).to be_successful }
       it { expect(subject.body).to include params[:email] }
     end
 
     context '会社管理ユーザが作成されること' do
-      let(:params) { tmp_params.merge({authority: User.authorities["company_admin"]}) }
+      let(:params) { tmp_params.merge(authority: User.authorities['company_admin']) }
       it { expect(subject).to be_successful }
       it { expect(subject.body).to include params[:email] }
     end
 
     context '管理ユーザが作成されないこと' do
-      let(:params) { tmp_params.merge({authority: User.authorities["admin"]}) }
+      let(:params) { tmp_params.merge(authority: User.authorities['admin']) }
       it { expect(subject.status).to eq 400 }
       it { expect(subject.body).to include 'この権限のユーザを作成する権限がありません' }
       it { expect { subject }.to change { User.count }.by(0) }
     end
   end
-
 
   context 'admin' do
     before do
@@ -66,19 +69,19 @@ RSpec.describe V1::UsersController, type: :controller do
     end
 
     context '通常ユーザが作成されること' do
-      let(:params) { tmp_params.merge({authority: User.authorities["normal"]}) }
+      let(:params) { tmp_params.merge(authority: User.authorities['normal']) }
       it { expect(subject).to be_successful }
       it { expect(subject.body).to include params[:email] }
     end
 
     context '会社管理ユーザが作成されること' do
-      let(:params) { tmp_params.merge({authority: User.authorities["company_admin"]}) }
+      let(:params) { tmp_params.merge(authority: User.authorities['company_admin']) }
       it { expect(subject).to be_successful }
       it { expect(subject.body).to include params[:email] }
     end
 
     context '管理ユーザが作成されること' do
-      let(:params) { tmp_params.merge({authority: User.authorities["admin"]}) }
+      let(:params) { tmp_params.merge(authority: User.authorities['admin']) }
       it { expect(subject).to be_successful }
       it { expect(subject.body).to include params[:email] }
     end

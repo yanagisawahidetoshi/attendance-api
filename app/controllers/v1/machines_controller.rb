@@ -3,76 +3,76 @@
 module V1
   class MachinesController < ApplicationController
     skip_before_action :authenticate_user_from_token!, only: [:create]
-    before_action :check_auth, only: [:index, :update, :delete]
-    before_action :valid_id, only: [:update, :delete]
-    
+    before_action :check_auth, only: %i[index update delete]
+    before_action :valid_id, only: %i[update delete]
+
     def index
       machines = Machine
       if strong_params[:company_id]
         machines = machines.where(company_id: strong_params[:company_id])
       end
       machines = machines.page(params[:page]).per(params[:per_page])
-      render json: {machines: machines, total: machines.total_pages}
+      render json: { machines: machines, total: machines.total_pages }
     end
-    
+
     def create
       if strong_params_for_create[:api_key].blank?
-        render status: 400, json: { message: 'APIKEYを入力してください' } and return
+        render(status: :bad_request, json: { message: 'APIKEYを入力してください' }) && return
       end
-      unless strong_params_for_create[:api_key] == ENV["APIKEY"]
-        render status: 400, json: { message: 'APIKEYが違います' } and return
+      unless strong_params_for_create[:api_key] == ENV['APIKEY']
+        render(status: :bad_request, json: { message: 'APIKEYが違います' }) && return
       end
       machine = Machine.create(strong_params)
       unless machine.valid?
-        render status: 400, json: { message: machine.errors.full_messages } and return
+        render(status: :bad_request, json: { message: machine.errors.full_messages }) && return
       end
     end
-    
+
     def update
-      if current_user[:authority] == User.authorities["company_admin"]
+      if current_user[:authority] == User.authorities['company_admin']
         strong_params_for_update.delete(:company_id)
       end
-      
+
       @machine.update(strong_params_for_update)
-      render json: {machine: @machine}
+      render json: { machine: @machine }
     end
-    
+
     def delete
       @machine.destroy
     end
 
     private
-    
+
     def strong_params
       params.permit(:id, :name, :company_id, :mac_address)
     end
-    
+
     def strong_params_for_create
       params.permit(:api_key, :mac_address, :company_id)
     end
-    
+
     def strong_params_for_update
       params.permit(:id, :name, :company_id)
     end
-    
+
     def check_auth
-      if current_user[:authority] == User.authorities["normal"]
-        render status: 400, json: { message: '権限がありません' } and return
+      if current_user[:authority] == User.authorities['normal']
+        render(status: :bad_request, json: { message: '権限がありません' }) && return
       end
-      
-      if current_user[:authority] != User.authorities["admin"] && 
-        strong_params[:company_id].nil?
-          render status: 400, json: { message: '会社IDは必須です' } and return
+
+      if current_user[:authority] != User.authorities['admin'] &&
+         strong_params[:company_id].nil?
+        render(status: :bad_request, json: { message: '会社IDは必須です' }) && return
       end
-      
-      if current_user[:authority] == User.authorities["company_admin"] &&
-        strong_params[:company_id].to_i != current_user[:company_id].to_i
-          render status: 400, json: { message: '会社IDが間違っています' } and return
+
+      if current_user[:authority] == User.authorities['company_admin'] &&
+         strong_params[:company_id].to_i != current_user[:company_id].to_i
+        render(status: :bad_request, json: { message: '会社IDが間違っています' }) && return
       end
     end
-    
+
     def valid_id
-      @machine = Machine.find_by_id(strong_params_for_update[:id])
+      @machine = Machine.find_by(id: strong_params_for_update[:id])
     end
   end
 end

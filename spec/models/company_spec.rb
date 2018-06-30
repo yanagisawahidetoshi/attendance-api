@@ -10,7 +10,7 @@ RSpec.describe Company, type: :model do
   it '名前が無ければ無効であること' do
     company = build(:company, name: nil)
     company.valid?
-    expect(company.errors[:name]).to include("を入力してください")
+    expect(company.errors[:name]).to include('を入力してください')
   end
 
   it '名前が33文字以上なら無効であること' do
@@ -36,19 +36,19 @@ RSpec.describe Company, type: :model do
     company.valid?
     expect(company.errors[:zip]).to include('は不正な値です')
   end
-  
+
   it '郵便番号のハイフンがなければ有効であること' do
     company = build(:company, zip: '5530002')
     company.valid?
     expect(build(:company)).to be_valid
   end
-  
+
   it '電話番号が14文字なら無効であること' do
     company = build(:company, tel: '090-4295-61856')
     company.valid?
     expect(company.errors[:tel]).to include('は13文字以内で入力してください')
   end
-  
+
   it '電話番号のハイフンが２個続きであれば無効であること' do
     company = build(:company, tel: '090-4295--6185')
     company.valid?
@@ -60,7 +60,7 @@ RSpec.describe Company, type: :model do
     company.valid?
     expect(build(:company)).to be_valid
   end
-  
+
   it '住所が65文字なら無効であること' do
     company = build(:company, address: 'a' * 65)
     company.valid?
