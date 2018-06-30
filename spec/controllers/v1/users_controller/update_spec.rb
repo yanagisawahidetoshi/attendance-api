@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 require 'faker'
 
@@ -15,23 +17,23 @@ RSpec.describe V1::UsersController, type: :controller do
         expect(response.body).to include '会社IDが間違っています'
         expect(response.status).to eq 400
       end
-      
+
       it '自分自身を更新できること' do
-        params = {id: User.first.id, name: Faker::Name.name, company_id: User.first.company_id}
+        params = { id: User.first.id, name: Faker::Name.name, company_id: User.first.company_id }
         put :update, params: params
         expect(response).to be_successful
         expect(response.body).to include params[:name]
       end
-      
+
       it '他人は更新できないこと' do
-        params = {id: User.last.id, name: Faker::Name.name, company_id: User.first.company_id}
+        params = { id: User.last.id, name: Faker::Name.name, company_id: User.first.company_id }
         put :update, params: params
         expect(response.body).to include '更新する権限がありません'
         expect(response.status).to eq 400
       end
 
       it '他の会社のユーザは更新できないこと' do
-        params = {id: User.last.id, name: Faker::Name.name, company_id: companies.last.id}
+        params = { id: User.last.id, name: Faker::Name.name, company_id: companies.last.id }
         put :update, params: params
         expect(response.body).to include '会社IDが間違っています'
         expect(response.status).to eq 400
@@ -51,23 +53,23 @@ RSpec.describe V1::UsersController, type: :controller do
         expect(response.body).to include '会社IDが間違っています'
         expect(response.status).to eq 400
       end
-      
+
       it '自分自身を更新できること' do
-        params = {id: User.first.id, name: Faker::Name.name, company_id: User.first.company_id}
+        params = { id: User.first.id, name: Faker::Name.name, company_id: User.first.company_id }
         put :update, params: params
         expect(response).to be_successful
         expect(response.body).to include params[:name]
       end
-      
+
       it '他人を更新でること' do
-        params = {id: User.last.id, name: Faker::Name.name, company_id: User.first.company_id}
+        params = { id: User.last.id, name: Faker::Name.name, company_id: User.first.company_id }
         put :update, params: params
         expect(response).to be_successful
         expect(response.body).to include params[:name]
       end
 
       it '他の会社のユーザは更新できないこと' do
-        params = {id: other_company_user.id, name: Faker::Name.name, company_id: other_company_user.company_id}
+        params = { id: other_company_user.id, name: Faker::Name.name, company_id: other_company_user.company_id }
         put :update, params: params
         expect(response.body).to include '会社IDが間違っています'
         expect(response.status).to eq 400
@@ -82,14 +84,14 @@ RSpec.describe V1::UsersController, type: :controller do
       let(:user) { create(:user, company_id: companies.first.id) }
 
       it '自分自身を更新できること' do
-        params = {id: User.first.id, name: Faker::Name.name}
+        params = { id: User.first.id, name: Faker::Name.name }
         put :update, params: params
         expect(response).to be_successful
         expect(response.body).to include params[:name]
       end
 
       it '他人を更新でること' do
-        params = {id: user.id, name: Faker::Name.name, company_id: user.company_id}
+        params = { id: user.id, name: Faker::Name.name, company_id: user.company_id }
         put :update, params: params
         expect(response).to be_successful
         expect(response.body).to include params[:name]

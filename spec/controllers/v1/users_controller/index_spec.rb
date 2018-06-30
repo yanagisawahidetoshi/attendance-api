@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 require 'faker'
 
@@ -12,7 +14,7 @@ RSpec.describe V1::UsersController, type: :controller do
       end
       it 'ユーザ一覧が取得できること' do
         per_page = 3
-        get :index, params: {page: 1, per_page: per_page, company_id: User.first.company_id}
+        get :index, params: { page: 1, per_page: per_page, company_id: User.first.company_id }
         body = JSON.parse(response.body)
         expect(body['users'].length).to eq per_page
         expect(response.body).to include User.first.name
@@ -20,7 +22,7 @@ RSpec.describe V1::UsersController, type: :controller do
       end
 
       it '他の会社のユーザ一覧は取得できないこと' do
-        get :index, params: {page: 1, per_page: 3, company_id: companies.last.id}
+        get :index, params: { page: 1, per_page: 3, company_id: companies.last.id }
         expect(response.body).to include '会社IDが間違っています'
         expect(response.body).not_to include 'users'
         expect(response.status).to eq 400
@@ -37,7 +39,7 @@ RSpec.describe V1::UsersController, type: :controller do
       it 'ユーザ一覧が取得できること' do
         users
         per_page = 3
-        get :index, params: {page: 1, per_page: per_page, company_id: users.first.company_id}
+        get :index, params: { page: 1, per_page: per_page, company_id: users.first.company_id }
         body = JSON.parse(response.body)
         expect(body['users'].length).to eq per_page
         expect(response.body).to include users.first.name
