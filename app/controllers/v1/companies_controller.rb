@@ -14,7 +14,7 @@ module V1
     def create
       company = Company.create(strong_params)
       unless company.valid?
-        render(status: :bad_request, json: { message: company.errors.full_messages }) && return
+        render_bad_request(company.errors.full_messages) && return
       end
 
       render json: { company: company }
@@ -32,20 +32,16 @@ module V1
     private
 
     def check_auth
-      unless current_user[:authority] == User.authorities['admin']
-        render(status: :bad_request, json: { message: '権限がありません' }) && return
-      end
+      render_bad_request('権限がありません') && return unless is_admin
     end
 
     def valid_id
-      if strong_params[:id].nil?
-        render(status: :bad_request, json: { message: ['IDを入力してください'] }) && return
-      end
+      render_bad_request('IDを入力してください') && return if strong_params[:id].nil?
       @company = Company.find_by(id: strong_params[:id])
 
-      if @company.nil?
-        render(status: :bad_request, json: { message: ['IDが見つかりません'] }) && return
-      end
+      return unless @company.nil?
+
+      render_bad_request('IDが見つかりません') && return
     end
 
     def strong_params

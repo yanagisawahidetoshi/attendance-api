@@ -46,20 +46,19 @@ module V1
     end
 
     def check_auth
-      if !is_admin && current_user[:company_id].to_i != strong_params[:company_id].to_i
+      if is_build_difference_company
         render_bad_request('会社IDが間違っています') && return
       end
 
-      if is_company_admin_user && strong_params[:authority].to_i == User.authorities['admin']
-        render_bad_request('この権限のユーザを作成する権限がありません') && return
-      end
+      return unless is_company_admin_user && check_params_authority('admin')
+
+      render_bad_request('この権限のユーザを作成する権限がありません') && return
     end
 
     def valid_id
       render_bad_request('IDを入力してください') && return if strong_params[:id].nil?
 
-      if is_normal_user &&
-         current_user[:id].to_i != strong_params[:id].to_i
+      if is_normal_user && different_user_id_for_param
         render_bad_request('更新する権限がありません') && return
       end
 

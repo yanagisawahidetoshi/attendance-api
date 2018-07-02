@@ -16,10 +16,7 @@ module V1
     end
 
     def create
-      if strong_params_for_create[:api_key].blank?
-        render(status: :bad_request, json: { message: 'APIKEYを入力してください' }) && return
-      end
-      unless strong_params_for_create[:api_key] == ENV['APIKEY']
+      unless check_api_key
         render(status: :bad_request, json: { message: 'APIKEYが違います' }) && return
       end
       machine = Machine.create(strong_params)

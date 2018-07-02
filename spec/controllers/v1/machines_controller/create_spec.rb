@@ -18,7 +18,7 @@ RSpec.describe V1::MachinesController, type: :controller do
         tmp_params[:api_key] = nil
         post :create, params: tmp_params
 
-        expect(response.body).to include 'APIKEYを入力してください'
+        expect(response.body).to include 'APIKEYが違います'
         expect(response.status).to eq 400
         expect { post(:create) }.to change { Machine.count }.by(0)
       end
