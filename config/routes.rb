@@ -18,6 +18,8 @@ Rails.application.routes.draw do
     post 'machines/create'
     put 'machines/update'
     delete 'machines/delete'
+    
+    post 'attendances/create'
   end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
