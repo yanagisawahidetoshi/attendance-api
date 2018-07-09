@@ -35,7 +35,7 @@ RSpec.describe V1::CompaniesController, type: :controller do
         expect { post(:create) }.to change { Company.count }.by(0)
       end
       it '正常に会社が登録されていること' do
-        params = { name: '柳沢' }
+        params = { name: Faker::Company.name, email: Faker::Internet.email }
         post :create, params: params
         expect(Company.find_by(name: params[:name]).present?).to eq true
       end

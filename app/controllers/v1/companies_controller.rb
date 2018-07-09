@@ -45,7 +45,7 @@ module V1
     end
 
     def strong_params
-      params.permit(:id, :name, :zip, :tel, :address)
+      params.permit(:id, :name, :zip, :tel, :address, :email)
     end
   end
 end
