@@ -69,7 +69,7 @@ module V1
     end
 
     def valid_id
-      @machine = Machine.find_by(mac_address: strong_params_for_update[:mac_address])
+      @machine = Machine.find(params[:id])
     end
   end
 end
