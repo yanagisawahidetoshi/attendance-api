@@ -55,6 +55,16 @@ RSpec.describe V1::CompaniesController, type: :controller do
         expect(response).to be_successful
         expect(response.body).to include params[:name]
       end
+
+      it 'メールアドレスが更新されること' do
+        company
+        params = { id: company.id, email: Faker::Internet.email }
+        put :update, params: params
+
+        expect(response).to be_successful
+        expect(response.body).to include params[:email]
+      end
+
       it '存在しないidの場合エラーになること' do
         company
         params = { id: company.id.to_i + 1, name: company.name }

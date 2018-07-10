@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'faker'
 
 RSpec.describe Company, type: :model do
   it 'バリデーションエラーがないこと' do
@@ -23,6 +24,18 @@ RSpec.describe Company, type: :model do
     company = build(:company, name: 'a' * 32)
     company.valid?
     expect(build(:company)).to be_valid
+  end
+
+  it 'メールアドレスが無ければ無効であること' do
+    company = build(:company, email: nil)
+    company.valid?
+    expect(company.errors[:email]).to include('を入力してください')
+  end
+
+  it 'メールアドレスに@が無ければ無効であること' do
+    company = build(:company, email: 'aabb.com')
+    company.valid?
+    expect(company.errors[:email]).to include('は不正な値です')
   end
 
   it '郵便番号が9文字なら無効であること' do
