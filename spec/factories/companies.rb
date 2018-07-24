@@ -2,9 +2,10 @@
 
 FactoryBot.define do
   factory :company do
-    name '柳屋'
-    zip '167-0041'
-    tel '090-4295-6185'
-    address '東京都杉並区善福寺1-12-14 ラテラブ101'
+    name { Faker::Company.name }
+    email { Faker::Internet.email }
+    zip { Faker::Address.postcode }
+    tel { Faker::PhoneNumber.phone_number }
+    address { Faker::Address.full_address }
   end
 end

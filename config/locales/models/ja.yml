@@ -1,0 +1,13 @@
+ja:
+  activerecord:
+    models:
+      company: 会社
+    attributes:
+      company:
+        id: ID
+        name: 会社名
+        zip: 郵便番号
+        tel: 電話番号
+        address: 住所
+        created_at: 登録日時
+        updated_at: 更新日時

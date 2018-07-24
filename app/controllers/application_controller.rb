@@ -17,6 +17,48 @@ class ApplicationController < ActionController::API
       authenticate_error
     end
   end
+  
+  protected
+  
+  def is_admin
+    current_user[:authority] == User.authorities['admin']
+  end
+  
+  def is_company_admin_user
+    current_user[:authority] == User.authorities['company_admin']
+  end
+  
+  def is_normal_user
+    current_user[:authority] == User.authorities['normal']
+  end
+  
+  def render_bad_request(message)
+    render(status: :bad_request, json: { message: message })
+  end
+
+  def is_build_difference_company
+    !is_admin && is_difference_company
+  end
+
+  def is_difference_company
+    current_user[:company_id].to_i != params[:company_id].to_i
+  end
+  
+  def check_params_authority(user_auth)
+    params[:authority].to_i == User.authorities[user_auth].to_i
+  end
+
+  def check_api_key
+    if params[:api_key].blank? || params[:api_key] != ENV['APIKEY']
+      false
+    else
+      true
+    end
+  end
+  
+  def different_user_id_for_param
+    current_user[:id].to_i != params[:id].to_i
+  end
 
   private
 
