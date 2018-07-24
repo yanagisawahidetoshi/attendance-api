@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 
   namespace :v1, defaults: { format: :json } do
     resource :login, only: [:create], controller: :sessions
+    delete 'logout', to: 'sessions#delete'
     resource :users, only: [:create]
     get 'users', to: 'users#index'
     put 'users/update'
