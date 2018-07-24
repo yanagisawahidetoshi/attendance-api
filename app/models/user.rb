@@ -14,7 +14,7 @@ class User < ApplicationRecord
 
   scope :search_card_id, ->(card_id) { where(card_id: card_id) }
   scope :company_id, ->(id) { find_by(id: id).company_id }
-
+  scope :logout, ->(id) { find_by(id: id).update!(access_token: nil) }
   def update_access_token!
     self.access_token = "#{id}:#{Devise.friendly_token}"
     save
