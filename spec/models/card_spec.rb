@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 require 'faker'
 
@@ -31,29 +33,37 @@ RSpec.describe Card, type: :model do
       card.valid?
       expect(card.errors[:company]).to include('を入力してください')
     end
-    
+
     it 'tokenがなくても有効であること' do
       card = build(:card, token: nil)
       card.valid?
-      expect(card.errors[:token]).not_to include('を入力してください')      
+      expect(card.errors[:token]).not_to include('を入力してください')
     end
-    
+
     it 'tokenが32文字なら有効であること' do
       card = build(:card, token: 'a' * 32)
       card.valid?
-      expect(card.errors[:token]).not_to include('は32文字で入力してください') 
+      expect(card.errors[:token]).not_to include('は32文字で入力してください')
     end
-    
+
     it 'tokenが33文字なら無効であること' do
       card = build(:card, token: 'a' * 33)
       card.valid?
-      expect(card.errors[:token]).to include('は32文字で入力してください') 
+      expect(card.errors[:token]).to include('は32文字で入力してください')
     end
-    
+
     it 'tokenが31文字なら無効であること' do
       card = build(:card, token: 'a' * 31)
       card.valid?
-      expect(card.errors[:token]).to include('は32文字で入力してください') 
+      expect(card.errors[:token]).to include('は32文字で入力してください')
+    end
+  end
+
+  context 'scope' do
+    describe 'search_card_id' do
+      let!(:card) { create(:card, company: company) }
+      subject { Card.search_card_id(card.card_id) }
+      it { is_expected.to include card }
     end
   end
 end

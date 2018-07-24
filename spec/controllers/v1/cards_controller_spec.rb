@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 require 'faker'
 require 'rails_helper'
 Faker::Config.locale = :ja
 
 RSpec.describe V1::AttendancesController, type: :controller do
   let!(:companies) { create_list(:company, 3) }
-  let!(:machine) { create(:machine,company: companies.first) }
-  
+  let!(:machine) { create(:machine, company: companies.first) }
+
   it 'API KEYがない場合エラーになること' do
     params = {
       mac_address: machine.mac_address,
@@ -46,7 +48,7 @@ RSpec.describe V1::AttendancesController, type: :controller do
     expect(response.body).to include 'CARD IDは必須です'
     expect(response.status).to eq 400
   end
-  
+
   it '正常にレスポンスを返すこと' do
     params = {
       mac_address: machine.mac_address,

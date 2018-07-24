@@ -20,6 +20,9 @@ Rails.application.routes.draw do
     delete 'machines/delete'
     
     post 'attendances/create'
+    post 'attendances/create_by_site'
+    put 'attendances/update'
+    delete 'attendances/delete'
   end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

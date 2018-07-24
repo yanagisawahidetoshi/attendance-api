@@ -10,7 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_03_004457) do
+ActiveRecord::Schema.define(version: 2018_07_15_051136) do
+
+  create_table "attendances", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "user_id"
+    t.date "date", null: false
+    t.time "in_time"
+    t.time "out_time"
+    t.float "recess"
+    t.integer "rest"
+    t.float "operating_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_attendances_on_user_id"
+  end
 
   create_table "cards", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "card_id", limit: 64, null: false
@@ -28,7 +41,7 @@ ActiveRecord::Schema.define(version: 2018_07_03_004457) do
     t.string "address", limit: 64
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name", "address"], name: "UNIQUE", unique: true
+    t.string "email", limit: 256, null: false
   end
 
   create_table "machines", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -57,10 +70,13 @@ ActiveRecord::Schema.define(version: 2018_07_03_004457) do
     t.integer "company_id"
     t.integer "authority"
     t.string "name"
+    t.integer "card_id"
+    t.index ["card_id"], name: "index_users_on_card_id"
     t.index ["company_id"], name: "index_users_on_company_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "attendances", "users"
   add_foreign_key "machines", "companies"
 end
