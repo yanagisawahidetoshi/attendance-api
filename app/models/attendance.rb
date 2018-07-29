@@ -11,22 +11,8 @@ class Attendance < ApplicationRecord
   scope :search_date, ->(date, user) { where(date: date).where(user: user) }
 
   def presence_and_rount_time
-    self.in_time = round_time(in_time, 'in_time') if in_time.present?
-    self.out_time = round_time(out_time, 'out_time') if out_time.present?
-  end
-
-  def round_time(time, in_out)
-    hour = time.strftime('%H').to_i
-    if in_out == 'in_time'
-      min = (time.strftime('%M').to_f / 15.to_f).ceil * 15
-      if min == 60
-        min = 0o0
-        hour += 1
-      end
-    elsif in_out == 'out_time'
-      min = (time.strftime('%M').to_f / 15.to_f).floor * 15
-    end
-    "#{format('%02d', hour)}:#{format('%02d', min)}"
+    self.in_time = CustomTime.round_time(in_time, 'up') if in_time.present?
+    self.out_time = CustomTime.round_time(out_time, 'down') if out_time.present?
   end
 
   def recess_hour(in_time, out_time)
