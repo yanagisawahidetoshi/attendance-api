@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
-  has_one :card, dependent: :destroy
   devise :database_authenticatable, :registerable, :validatable
 
   after_create :update_access_token!

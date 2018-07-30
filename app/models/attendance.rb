@@ -18,10 +18,7 @@ class Attendance < ApplicationRecord
   def recess_hour(in_time, out_time)
     return nil if in_time.blank? || out_time.blank?
 
-    in_time = convert_timestamp(in_time)
-    out_time = convert_timestamp(out_time)
-
-    diff_time = (out_time - in_time) / 3600
+    diff_time = (conv_timestamp(out_time) - conv_timestamp(in_time)) / 3600
 
     if diff_time >= 8
       1
@@ -32,21 +29,21 @@ class Attendance < ApplicationRecord
     end
   end
 
-  def convert_timestamp(time)
+  def conv_timestamp(time)
     return nil if time.blank?
     if time.instance_of?(ActiveSupport::TimeWithZone) ||
        time.instance_of?(DateTime)
       time.to_i
     else
-      DateTime.parse(time).to_i
+      Time.parse(time).to_i
     end
   end
 
   def build_operating_time(obj)
     return nil if obj.in_time.blank? || obj.out_time.blank?
 
-    in_time = convert_timestamp(obj.in_time)
-    out_time = convert_timestamp(obj.out_time)
+    in_time = conv_timestamp(obj.in_time)
+    out_time = conv_timestamp(obj.out_time)
     recess = obj.recess.presence || 0
 
     (out_time - in_time) / 3600 - recess
