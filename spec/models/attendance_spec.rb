@@ -105,68 +105,6 @@ RSpec.describe Attendance, type: :model do
     end
   end
 
-  context 'round_time' do
-    describe '出勤時、切上げられること' do
-      it '15分に丸められること' do
-        time = DateTime.parse('2018-10-10 10:14')
-        attendance = Attendance.new
-        expect(attendance.round_time(time, 'in_time')).to eq '10:15'
-      end
-      it '00分に丸められること' do
-        time = DateTime.parse('2018-10-10 10:00')
-        attendance = Attendance.new
-        expect(attendance.round_time(time, 'in_time')).to eq '10:00'
-      end
-      it '30分に丸められること' do
-        time = DateTime.parse('2018-10-10 10:20')
-        attendance = Attendance.new
-        expect(attendance.round_time(time, 'in_time')).to eq '10:30'
-      end
-      it '45分に丸められること' do
-        time = DateTime.parse('2018-10-10 10:41')
-        attendance = Attendance.new
-        expect(attendance.round_time(time, 'in_time')).to eq '10:45'
-      end
-      it '00分に丸めら時刻が繰り上がるれること' do
-        time = DateTime.parse('2018-10-10 10:59')
-        attendance = Attendance.new
-        expect(attendance.round_time(time, 'in_time')).to eq '11:00'
-      end
-      it '00分に丸めら時刻が繰り上がるれること' do
-        time = DateTime.parse('2018-10-10 08:59')
-        attendance = Attendance.new
-        expect(attendance.round_time(time, 'in_time')).to eq '09:00'
-      end
-    end
-    describe '退勤時、切捨て' do
-      it '00分に丸められること' do
-        time = DateTime.parse('2018-10-10 10:14')
-        attendance = Attendance.new
-        expect(attendance.round_time(time, 'out_time')).to eq '10:00'
-      end
-      it '00分に丸められること' do
-        time = DateTime.parse('2018-10-10 10:00')
-        attendance = Attendance.new
-        expect(attendance.round_time(time, 'out_time')).to eq '10:00'
-      end
-      it '15分に丸められること' do
-        time = DateTime.parse('2018-10-10 10:20')
-        attendance = Attendance.new
-        expect(attendance.round_time(time, 'out_time')).to eq '10:15'
-      end
-      it '30分に丸められること' do
-        time = DateTime.parse('2018-10-10 10:41')
-        attendance = Attendance.new
-        expect(attendance.round_time(time, 'out_time')).to eq '10:30'
-      end
-      it '45分に丸められること' do
-        time = DateTime.parse('2018-10-10 10:59')
-        attendance = Attendance.new
-        expect(attendance.round_time(time, 'out_time')).to eq '10:45'
-      end
-    end
-  end
-
   context 'build_operating_time' do
     describe '休憩時間がある場合' do
       it '稼動時間が取得できること' do
