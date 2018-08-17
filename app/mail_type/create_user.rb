@@ -10,8 +10,8 @@ class CreateUser
       ユーザ登録が完了しました。
 
       下記の仮パスワードにてログインしパスワードの変更をお願いします。
-      #{password}
 
+      #{password}
     EOF
     body
   end

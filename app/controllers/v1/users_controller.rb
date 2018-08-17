@@ -24,7 +24,7 @@ module V1
       password = SecureRandom.base64(8)
       @user.password = password
       if @user.save!
-        # send_mail(to: @user.email, subject: CreateUser.subject, body: CreateUser.body(password))
+        send_mail(to: @user.email, subject: CreateUser.subject, body: CreateUser.body(password))
         render json: @user, serializer: V1::SessionSerializer, root: nil
       else
         render json: { error: t('user_create_error') },

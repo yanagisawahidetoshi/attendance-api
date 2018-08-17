@@ -6,11 +6,11 @@ include SendGrid
 module MailSendModule
   extend ActiveSupport::Concern
 
-  def send_mai(to:, mail_type:)
-    email_from = Email.new(email: 'test@example.com')
+  def send_mail(to:, subject:, body:)
+    return unless Rails.env.production?
+    email_from = Email.new(email: 'yanagisawa@ultrasevenstar.com')
     email_to = Email.new(email: to)
-    subject = 'Sending with SendGrid is Fun'
-    content = Content.new(type: 'text/plain', value: 'and easy to do anywhere, even with Ruby')
+    content = Content.new(type: 'text/plain', value: body)
     mail = Mail.new(email_from, subject, email_to, content)
 
     sg = SendGrid::API.new(api_key: ENV['SENDGRID_API_KEY'])
