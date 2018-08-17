@@ -2,6 +2,8 @@
 
 module V1
   class UsersController < ApplicationController
+    include MailSendModule
+
     # skip_before_action :authenticate_user_from_token!, only: [:create]
     before_action :check_auth
     before_action :valid_id, only: %i[update delete]
@@ -18,10 +20,11 @@ module V1
     # Create an user
     def create
       render_bad_request('ユーザを作成する権限がありません') && return if is_normal_user
-
       @user = User.new strong_params
-
+      password = SecureRandom.base64(8)
+      @user.password = password
       if @user.save!
+        # send_mail(to: @user.email, subject: CreateUser.subject, body: CreateUser.body(password))
         render json: @user, serializer: V1::SessionSerializer, root: nil
       else
         render json: { error: t('user_create_error') },
