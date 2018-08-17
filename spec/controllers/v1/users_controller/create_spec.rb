@@ -46,7 +46,7 @@ RSpec.describe V1::UsersController, type: :controller do
       it { expect(subject).to be_successful }
       it { expect(subject.body).to include params[:email] }
     end
-    
+
     context 'パスワードがなくてもユーザが作成されること' do
       let(:params) { tmp_params.merge(authority: User.authorities['normal'], password: nil) }
       it { expect(subject).to be_successful }
