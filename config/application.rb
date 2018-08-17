@@ -27,6 +27,7 @@ module Myapp
     config.autoload_paths += Dir["#{config.root}/app/models/validators"]
     config.time_zone = 'Tokyo'
     config.active_record.time_zone_aware_types = [:datetime, :time]
+    config.paths.add 'mail_type', eager_load: true
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
