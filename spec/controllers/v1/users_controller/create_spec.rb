@@ -10,7 +10,6 @@ RSpec.describe V1::UsersController, type: :controller do
       name: Faker::Name.name,
       email: Faker::Internet.email,
       password: 'password',
-      password_confirmation: 'password',
       company_id: User.first.company_id
     }
   end
@@ -44,6 +43,12 @@ RSpec.describe V1::UsersController, type: :controller do
 
     context '通常ユーザが作成されること' do
       let(:params) { tmp_params.merge(authority: User.authorities['normal']) }
+      it { expect(subject).to be_successful }
+      it { expect(subject.body).to include params[:email] }
+    end
+    
+    context 'パスワードがなくてもユーザが作成されること' do
+      let(:params) { tmp_params.merge(authority: User.authorities['normal'], password: nil) }
       it { expect(subject).to be_successful }
       it { expect(subject.body).to include params[:email] }
     end
